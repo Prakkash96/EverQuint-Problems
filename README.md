@@ -1,0 +1,1 @@
+The repository contains two separate projects. The README for each project is available inside its respective project folder. Please refer to the README files within those folders for detailed setup instructions and documentation.
