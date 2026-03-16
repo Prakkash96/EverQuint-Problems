@@ -1,43 +1,35 @@
 const BUILDINGS = [
-    { name: "Theatre", key: "T", time: 5, earn: 1500 },
     { name: "Pub", key: "P", time: 4, earn: 1000 },
+    { name: "Theatre", key: "T", time: 5, earn: 1500 },
     { name: "Commercial Park", key: "C", time: 10, earn: 2000 }
 ];
 
-function dfs(state, n, currentTime, profit, plan) {
-    let moved = false;
+function maxProfitPlans(n, sum, res, currObj) {
+    if (sum > res.maxVal) {
+        res.maxVal = sum;
+        res.maxArr = new Set();
+    }
+    if (sum >= res.maxVal) (res.maxArr).add(currObj);
+    if (n == 0) return sum;
+    let maxi = 0;
     for (let b of BUILDINGS) {
-        let finish = currentTime + b.time;
-        if (finish <= n) {
-            moved = true;
-            let earning = (n - finish) * b.earn;
-            plan[b.key]++;
-            dfs(state, n, finish, profit + earning, plan);
-            plan[b.key]--;
+        const timeLeft = n - b.time;
+        const currEarning = sum + (b.earn * timeLeft);
+        if (timeLeft >= 0) {
+            currObj[b.key]++;
+            maxi = Math.max(maxi, maxProfitPlans(timeLeft, currEarning, res, { ...currObj }));
+            currObj[b.key]--;
         }
     }
-    if (!moved) {
-        if (profit > state.maxProfit) {
-            state.maxProfit = profit;
-            state.solutions = [{ ...plan }];
-        }
-        else if (profit === state.maxProfit) {
-            state.solutions.push({ ...plan });
-        }
-    }
-}
-
-function maxProfitPlans(n) {
-    let state = { maxProfit: 0, solutions: [] };
-    dfs(state, n, 0, 0, { T: 0, P: 0, C: 0 });
-    return state;
+    return Math.max(sum, maxi);
 }
 
 function solve(n) {
     console.log("\nNEW TEST CASE : \n\nINPUT : \nTime Unit = " + n + "\n\nOUTPUT : ");
-    const result = maxProfitPlans(n);
-    console.log("Earnings : " + result.maxProfit + "\nAll Possible Plans that earns maximum profit : ");
-    result.solutions.forEach((plan, index) => {
+    const resLog = { maxVal: 0, maxArr: new Set() };
+    const result = maxProfitPlans(n, 0, resLog, { T: 0, P: 0, C: 0 });
+    console.log("Earnings : " + result + "\nAll Possible Plans that earns maximum profit : ");
+    (resLog.maxArr).forEach((plan, index) => {
         console.log(`{ T = ${plan.T} P = ${plan.P} C = ${plan.C} }`);
     });
     console.log("\n\n");
@@ -50,6 +42,8 @@ function testCases() {
     solve(8);
     // TEST CASE 3 :-
     solve(13);
+    // TEST CASE 4 :-
+    solve(49);
 }
 
 function main() {
