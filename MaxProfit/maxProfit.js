@@ -8,8 +8,10 @@ function maxProfitPlans(n, sum, res, currObj) {
     if (sum > res.maxVal) {
         res.maxVal = sum;
         res.maxArr = new Set();
+        res.maxArr.add({ T: currObj.T, P: currObj.P, C: currObj.C });
+    } else if (sum === res.maxVal) {
+        res.maxArr.add({ T: currObj.T, P: currObj.P, C: currObj.C });
     }
-    if (sum >= res.maxVal) (res.maxArr).add(currObj);
     if (n == 0) return sum;
     let maxi = 0;
     for (let b of BUILDINGS) {
@@ -17,7 +19,7 @@ function maxProfitPlans(n, sum, res, currObj) {
         const currEarning = sum + (b.earn * timeLeft);
         if (timeLeft >= 0) {
             currObj[b.key]++;
-            maxi = Math.max(maxi, maxProfitPlans(timeLeft, currEarning, res, { ...currObj }));
+            maxi = Math.max(maxi, maxProfitPlans(timeLeft, currEarning, res, currObj));
             currObj[b.key]--;
         }
     }
@@ -29,7 +31,7 @@ function solve(n) {
     const resLog = { maxVal: 0, maxArr: new Set() };
     const result = maxProfitPlans(n, 0, resLog, { T: 0, P: 0, C: 0 });
     console.log("Earnings : " + result + "\nAll Possible Plans that earns maximum profit : ");
-    (resLog.maxArr).forEach((plan, index) => {
+    resLog.maxArr.forEach((plan) => {
         console.log(`{ T = ${plan.T} P = ${plan.P} C = ${plan.C} }`);
     });
     console.log("\n\n");
