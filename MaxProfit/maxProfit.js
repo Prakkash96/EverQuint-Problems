@@ -6,7 +6,7 @@ const BUILDINGS = [
 
 function maxProfit(n, dpArray) {
     if (n < 0) return 0;
-    if(dpArray[n]) return dpArray[n];
+    if (dpArray[n]) return dpArray[n];
     let maxi = 0;
     for (let b of BUILDINGS)
         maxi = Math.max(maxi, (b.earn * (n - b.time) + maxProfit(n - b.time, dpArray)));
@@ -16,10 +16,7 @@ function maxProfit(n, dpArray) {
 function maxProfitPlan(n) {
     const result = [];
     if (n < 4) return [{ T: 0, P: 0, C: 0 }];
-    if ((n % 5) == 4) {
-        if (n > 5) result.push({ T: Math.floor(n / 5) - 1, P: 2, C: 0 });
-        result.push({ T: Math.floor(n / 5), P: 1, C: 0 });
-    }
+    if ((n % 5) == 4 && n > 5) result.push({ T: Math.floor(n / 5) - 1, P: 2, C: 0 });
     if ((n % 5) == 2) result.push({ T: Math.floor(n / 5) - 1, P: 1, C: 0 });
     result.push({ T: Math.floor((n - 2) / 5), P: ((n % 5) == 0 || (n % 5) == 1) ? 1 : 0, C: 0 });
     return result;
