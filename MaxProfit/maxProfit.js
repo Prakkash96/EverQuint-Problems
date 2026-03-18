@@ -4,36 +4,36 @@ const BUILDINGS = [
     { name: "Commercial Park", key: "C", time: 10, earn: 2000 }
 ];
 
-function maxProfitPlans(n, sum, res, currObj) {
-    if (sum > res.maxVal) {
-        res.maxVal = sum;
-        res.maxArr = new Set();
-        res.maxArr.add({ T: currObj.T, P: currObj.P, C: currObj.C });
-    } else if (sum === res.maxVal) {
-        res.maxArr.add({ T: currObj.T, P: currObj.P, C: currObj.C });
-    }
-    if (n == 0) return sum;
+function maxProfit(n, dpArray) {
+    if (n < 0) return 0;
+    if(dpArray[n]) return dpArray[n];
     let maxi = 0;
-    for (let b of BUILDINGS) {
-        const timeLeft = n - b.time;
-        const currEarning = sum + (b.earn * timeLeft);
-        if (timeLeft >= 0) {
-            currObj[b.key]++;
-            maxi = Math.max(maxi, maxProfitPlans(timeLeft, currEarning, res, currObj));
-            currObj[b.key]--;
-        }
+    for (let b of BUILDINGS)
+        maxi = Math.max(maxi, (b.earn * (n - b.time) + maxProfit(n - b.time, dpArray)));
+    return dpArray[n] = maxi;
+}
+
+function maxProfitPlan(n) {
+    const result = [];
+    if (n < 4) return [{ T: 0, P: 0, C: 0 }];
+    if ((n % 5) == 4) {
+        if (n > 5) result.push({ T: Math.floor(n / 5) - 1, P: 2, C: 0 });
+        result.push({ T: Math.floor(n / 5), P: 1, C: 0 });
     }
-    return Math.max(sum, maxi);
+    if ((n % 5) == 2) result.push({ T: Math.floor(n / 5) - 1, P: 1, C: 0 });
+    result.push({ T: Math.floor((n - 2) / 5), P: ((n % 5) == 0 || (n % 5) == 1) ? 1 : 0, C: 0 });
+    return result;
 }
 
 function solve(n) {
     console.log("\nNEW TEST CASE : \n\nINPUT : \nTime Unit = " + n + "\n\nOUTPUT : ");
-    const resLog = { maxVal: 0, maxArr: new Set() };
-    const result = maxProfitPlans(n, 0, resLog, { T: 0, P: 0, C: 0 });
-    console.log("Earnings : " + result + "\nAll Possible Plans that earns maximum profit : ");
-    resLog.maxArr.forEach((plan) => {
+    const dpArray = [];
+    const result = maxProfitPlan(n);
+    const maxi = maxProfit(n, dpArray);
+    console.log("Earnings : " + maxi + "\nAll Possible Plans that earns maximum profit : ");
+    for (const plan of result) {
         console.log(`{ T = ${plan.T} P = ${plan.P} C = ${plan.C} }`);
-    });
+    };
     console.log("\n\n");
 }
 
